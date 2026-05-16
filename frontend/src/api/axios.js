@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '') + '/api',
+  baseURL: 'https://ethara-backend-production.up.railway.app/api',
   headers: { 'Content-Type': 'application/json' },
 })
 
