@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'https://ethara-backend-production.up.railway.app/api',
+  baseURL: 'https://ethara-production-7c4c.up.railway.app/api',
   headers: { 'Content-Type': 'application/json' },
 })
 
