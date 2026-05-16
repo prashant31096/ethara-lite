@@ -26,7 +26,7 @@ export default function RegisterPage() {
       setLoading(false); return
     }
     try {
-      const { data } = await api.post('/auth/register/', form)
+      const { data } = await api.post('auth/register/', form)
       localStorage.setItem('access',  data.access)
       localStorage.setItem('refresh', data.refresh)
       setUser(data.user)

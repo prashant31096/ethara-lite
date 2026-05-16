@@ -31,8 +31,8 @@ export default function ProjectsPage() {
     setLoading(true)
     try {
       const [projRes, usersRes] = await Promise.all([
-        api.get('/projects/'),
-        api.get('/auth/users/')
+        api.get('projects/'),
+        api.get('auth/users/')
       ])
       setProjects(projRes.data)
       setUsers(usersRes.data)
@@ -52,7 +52,7 @@ export default function ProjectsPage() {
     e.preventDefault()
     setCreating(true)
     try {
-      const { data } = await api.post('/projects/', newProject)
+      const { data } = await api.post('projects/', newProject)
       setProjects([data, ...projects])
       setShowAddModal(false)
       setNewProject({ title: '', description: '', status: 'planning', worker_ids: [] })
@@ -74,7 +74,7 @@ export default function ProjectsPage() {
         status: editProject.status,
         worker_ids: editProject.worker_ids
       }
-      const { data } = await api.patch(`/projects/${editProject.id}/`, payload)
+      const { data } = await api.patch(`projects/${editProject.id}/`, payload)
       setProjects(projects.map(p => p.id === data.id ? data : p))
       setShowEditModal(false)
       setEditProject(null)
@@ -88,7 +88,7 @@ export default function ProjectsPage() {
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      const { data } = await api.patch(`/projects/${id}/`, { status })
+      const { data } = await api.patch(`projects/${id}/`, { status })
       setProjects(projects.map(p => p.id === id ? data : p))
       toast('success', 'Project status updated.')
     } catch {

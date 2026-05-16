@@ -49,7 +49,7 @@ export default function UserPanel() {
         avatar_color: user.profile?.avatar_color || '#7c3aed',
       })
     }
-    api.get('/auth/designations/')
+    api.get('auth/designations/')
       .then(r => setDesignations(r.data))
       .catch(err => console.error('Failed to load designations:', err))
   }, [user])
@@ -63,7 +63,7 @@ export default function UserPanel() {
     e.preventDefault()
     setSaving(true)
     try {
-      const { data } = await api.patch('/auth/me/update/', profile)
+      const { data } = await api.patch('auth/me/update/', profile)
       setUser(data)
       showMsg('success', 'Profile updated successfully!')
     } catch (err) {
@@ -81,7 +81,7 @@ export default function UserPanel() {
     }
     setPwSaving(true)
     try {
-      await api.post('/auth/me/password/', {
+      await api.post('auth/me/password/', {
         old_password: pwForm.old_password,
         new_password: pwForm.new_password,
       })

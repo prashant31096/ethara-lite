@@ -17,7 +17,7 @@ const useAuthStore = create((set) => ({
     const token = localStorage.getItem('access')
     if (!token) { set({ loading: false }); return }
     try {
-      const { data } = await api.get('/auth/me/')
+      const { data } = await api.get('auth/me/')
       set({ user: data, loading: false })
     } catch {
       localStorage.removeItem('access')

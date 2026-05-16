@@ -16,7 +16,7 @@ export default function LoginPage() {
     e.preventDefault()
     setError(''); setLoading(true)
     try {
-      const { data } = await api.post('/auth/login/', form)
+      const { data } = await api.post('auth/login/', form)
       localStorage.setItem('access',  data.access)
       localStorage.setItem('refresh', data.refresh)
       setUser(data.user)

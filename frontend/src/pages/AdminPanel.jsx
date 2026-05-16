@@ -22,13 +22,13 @@ export default function AdminPanel() {
 
   useEffect(() => {
     fetchUsers()
-    api.get('/auth/designations/').then(r => setDesignations(r.data)).catch(() => {})
+    api.get('auth/designations/').then(r => setDesignations(r.data)).catch(() => {})
   }, [])
 
   const fetchUsers = async () => {
     setLoading(true)
     try {
-      const { data } = await api.get('/auth/users/')
+      const { data } = await api.get('auth/users/')
       setUsers(data)
     } catch {
       toast('danger', 'Failed to load users.')
@@ -45,7 +45,7 @@ export default function AdminPanel() {
   const toggleStaff = async (u) => {
     setUpdating(u.id)
     try {
-      const { data } = await api.patch(`/auth/users/${u.id}/update/`, { is_staff: !u.is_staff })
+      const { data } = await api.patch(`auth/users/${u.id}/update/`, { is_staff: !u.is_staff })
       setUsers(prev => prev.map(x => x.id === data.id ? data : x))
       toast('success', `${data.username} is now ${data.is_staff ? 'Admin' : 'User'}.`)
     } catch (err) {
@@ -58,7 +58,7 @@ export default function AdminPanel() {
   const toggleActive = async (u) => {
     setUpdating(u.id)
     try {
-      const { data } = await api.patch(`/auth/users/${u.id}/update/`, { is_active: !u.is_active })
+      const { data } = await api.patch(`auth/users/${u.id}/update/`, { is_active: !u.is_active })
       setUsers(prev => prev.map(x => x.id === data.id ? data : x))
       toast('success', `${data.username} ${data.is_active ? 'activated' : 'deactivated'}.`)
     } catch (err) {
@@ -72,7 +72,7 @@ export default function AdminPanel() {
     e.preventDefault()
     setCreating(true)
     try {
-      const { data } = await api.post('/auth/users/create/', newUser)
+      const { data } = await api.post('auth/users/create/', newUser)
       setUsers([data, ...users])
       setShowAddModal(false)
       setNewUser({
