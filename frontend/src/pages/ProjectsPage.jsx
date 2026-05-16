@@ -18,6 +18,10 @@ export default function ProjectsPage() {
     title: '', description: '', status: 'planning', worker_ids: []
   })
   const [creating, setCreating] = useState(false)
+  
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editProject, setEditProject] = useState(null)
+  const [updating, setUpdating] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -57,6 +61,28 @@ export default function ProjectsPage() {
       toast('danger', err.response?.data?.detail || 'Failed to deploy project.')
     } finally {
       setCreating(false)
+    }
+  }
+
+  const handleEditProject = async (e) => {
+    e.preventDefault()
+    setUpdating(true)
+    try {
+      const payload = {
+        title: editProject.title,
+        description: editProject.description,
+        status: editProject.status,
+        worker_ids: editProject.worker_ids
+      }
+      const { data } = await api.patch(`/projects/${editProject.id}/`, payload)
+      setProjects(projects.map(p => p.id === data.id ? data : p))
+      setShowEditModal(false)
+      setEditProject(null)
+      toast('success', `Project updated successfully.`)
+    } catch (err) {
+      toast('danger', err.response?.data?.detail || 'Failed to update project.')
+    } finally {
+      setUpdating(false)
     }
   }
 
@@ -165,7 +191,22 @@ export default function ProjectsPage() {
                   gap: '16px'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h3 style={{ margin: 0, fontSize: '20px', fontFamily: 'var(--font-display)' }}>{p.title}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <h3 style={{ margin: 0, fontSize: '20px', fontFamily: 'var(--font-display)' }}>{p.title}</h3>
+                      <button 
+                        className="btn btn-ghost btn-sm" 
+                        style={{ padding: '2px 8px', fontSize: '12px' }}
+                        onClick={() => {
+                          setEditProject({
+                            ...p,
+                            worker_ids: p.workers_details?.map(w => w.id) || []
+                          })
+                          setShowEditModal(true)
+                        }}
+                      >
+                        ✎ Edit
+                      </button>
+                    </div>
                     <select 
                       value={p.status}
                       onChange={(e) => handleUpdateStatus(p.id, e.target.value)}
@@ -277,6 +318,78 @@ export default function ProjectsPage() {
                     <button type="button" className="btn btn-ghost" onClick={() => setShowAddModal(false)}>Cancel</button>
                     <button type="submit" className="btn btn-primary" disabled={creating}>
                       {creating ? <><span className="btn-spinner"/> Deploying...</> : 'Deploy Project'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Edit Project Modal */}
+          {showEditModal && editProject && (
+            <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h2 className="modal-title">Edit Project</h2>
+                  <button className="modal-close" onClick={() => setShowEditModal(false)}>✕</button>
+                </div>
+                <form onSubmit={handleEditProject}>
+                  <div className="form-group">
+                    <label className="form-label">Project Title</label>
+                    <input className="form-input" required value={editProject.title} onChange={e => setEditProject({...editProject, title: e.target.value})} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Description</label>
+                    <textarea className="form-input" rows="3" value={editProject.description} onChange={e => setEditProject({...editProject, description: e.target.value})} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Status</label>
+                    <select className="form-select" value={editProject.status} onChange={e => setEditProject({...editProject, status: e.target.value})}>
+                      <option value="planning">Planning</option>
+                      <option value="active">Active</option>
+                      <option value="completed">Completed</option>
+                      <option value="on_hold">On Hold</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Assign Workers</label>
+                    <div style={{
+                      maxHeight: '150px', overflowY: 'auto', background: 'rgba(0,0,0,0.2)',
+                      padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)'
+                    }}>
+                      {users.filter(u => u.is_active).map(u => (
+                        <label key={u.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', cursor: 'pointer' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={editProject.worker_ids.includes(u.id)}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setEditProject(prev => ({
+                                ...prev, 
+                                worker_ids: checked ? [...prev.worker_ids, u.id] : prev.worker_ids.filter(id => id !== u.id)
+                              }))
+                            }}
+                          />
+                          <div style={{
+                            width: '20px', height: '20px', borderRadius: '50%',
+                            background: u.profile?.avatar_color || '#7c3aed',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#fff'
+                          }}>
+                            {getInitials(u)}
+                          </div>
+                          <span>{u.first_name} {u.last_name} (@{u.username})</span>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginLeft: 'auto' }}>
+                            {u.profile?.designation}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                    <button type="button" className="btn btn-ghost" onClick={() => setShowEditModal(false)}>Cancel</button>
+                    <button type="submit" className="btn btn-primary" disabled={updating}>
+                      {updating ? <><span className="btn-spinner"/> Updating...</> : 'Save Changes'}
                     </button>
                   </div>
                 </form>

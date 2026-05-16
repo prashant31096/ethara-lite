@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import Navbar from '../components/Navbar'
 import api from '../api/axios'
+import axios from 'axios'
 import useAuthStore from '../store/authStore'
 
 export default function AdminPanel() {
@@ -21,7 +22,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     fetchUsers()
-    api.get('/auth/designations/').then(r => setDesignations(r.data)).catch(() => {})
+    axios.get('http://127.0.0.1:8000/api/auth/designations/').then(r => setDesignations(r.data)).catch(() => {})
   }, [])
 
   const fetchUsers = async () => {

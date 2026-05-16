@@ -96,7 +96,7 @@ def change_password_view(request):
 
 # ── Admin: List All Users ─────────────────────────────────────────
 @api_view(['GET'])
-@permission_classes([permissions.IsAdminUser])
+@permission_classes([permissions.IsAuthenticated])
 def admin_users_list(request):
     users = User.objects.all().select_related('profile').order_by('-date_joined')
     serializer = UserSerializer(users, many=True)

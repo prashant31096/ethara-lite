@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import api from '../api/axios'
+import axios from 'axios'
 import useAuthStore from '../store/authStore'
 
 const AVATAR_COLORS = [
   '#7c3aed','#9333ea','#a855f7','#6d28d9','#4f46e5',
   '#0891b2','#0e7490','#059669','#d97706','#dc2626',
-  '#db2777','#7c3aed',
+  '#db2777','#e11d48',
 ]
 
 const TABS = ['Profile', 'Account Settings']
@@ -48,7 +49,9 @@ export default function UserPanel() {
         avatar_color: user.profile?.avatar_color || '#7c3aed',
       })
     }
-    api.get('/auth/designations/').then(r => setDesignations(r.data)).catch(() => {})
+    axios.get('http://127.0.0.1:8000/api/auth/designations/')
+      .then(r => setDesignations(r.data))
+      .catch(err => console.error('Failed to load designations:', err))
   }, [user])
 
   const showMsg = (type, text) => {
