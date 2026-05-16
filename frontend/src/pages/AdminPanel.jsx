@@ -22,7 +22,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     fetchUsers()
-    axios.get('http://127.0.0.1:8000/api/auth/designations/').then(r => setDesignations(r.data)).catch(() => {})
+    api.get('/auth/designations/').then(r => setDesignations(r.data)).catch(() => {})
   }, [])
 
   const fetchUsers = async () => {

@@ -49,7 +49,7 @@ export default function UserPanel() {
         avatar_color: user.profile?.avatar_color || '#7c3aed',
       })
     }
-    axios.get('http://127.0.0.1:8000/api/auth/designations/')
+    api.get('/auth/designations/')
       .then(r => setDesignations(r.data))
       .catch(err => console.error('Failed to load designations:', err))
   }, [user])
